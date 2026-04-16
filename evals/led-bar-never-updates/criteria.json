@@ -1,0 +1,41 @@
+{
+  "context": "Tests whether the agent correctly DIAGNOSES the quantisation trap: the LED bar never updates because float targets never hold the exact same value for 2 consecutive ticks, so the stability filter never commits. The diagnosis is the hard part — the fix (integer quantisation) follows naturally once the root cause is understood.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Identifies stability filter as the cause (not rate limiting or threading)",
+      "max_score": 25,
+      "description": "The report or code comments correctly identify the STABILITY FILTER (consecutive-tick-hold) as the mechanism blocking updates — NOT rate limiting, NOT a threading bug, NOT a connection issue. The stability filter never commits because its condition is never met"
+    },
+    {
+      "name": "Identifies float equality across ticks as the root cause",
+      "max_score": 25,
+      "description": "The report explains that raw float confidence values (e.g. 0.7231, 0.7229) differ by tiny amounts between consecutive ticks, so target == self._pending is never True for 2 ticks in a row. The exact-equality check in the stability filter combined with drifting floats is the root cause"
+    },
+    {
+      "name": "Quantises to integer matching device resolution",
+      "max_score": 15,
+      "description": "The fix quantises the float to an integer in the range 0..N matching the number of LED segments (e.g. int(round(conf * 6)) for a 6-segment device). The quantised value is coarse enough that consecutive ticks produce the same integer, allowing the stability filter to commit"
+    },
+    {
+      "name": "Target cardinality matches device states",
+      "max_score": 10,
+      "description": "Code or report states that the number of distinct target values should equal the number of distinguishable output states on the device (N+1 values for an N-segment bar: 0 through N). Finer values are noise that defeats the stability filter"
+    },
+    {
+      "name": "Distinct value count shown (broken vs fixed)",
+      "max_score": 10,
+      "description": "validation_report.txt or log output contrasts the distinct set_target value counts: broken approach shows many distinct floats (e.g. 20+), fixed approach shows <= N+1 distinct integers"
+    },
+    {
+      "name": "Fixed targets are integers not floats",
+      "max_score": 10,
+      "description": "The corrected code passes integer values (not floats, not finely-rounded floats like round(conf, 2)) to set_target(). Only coarse integer quantisation counts as a valid fix"
+    },
+    {
+      "name": "No fine-grained rounding in fix",
+      "max_score": 5,
+      "description": "Does NOT use round(conf, N) with N >= 1 as the fix — only coarse integer quantisation that matches device resolution counts"
+    }
+  ]
+}

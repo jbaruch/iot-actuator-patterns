@@ -1,0 +1,36 @@
+{
+  "context": "Tests whether the agent implements the thermometer bottom-up fill convention correctly, applies the correct index inversion for top-indexed hardware, and avoids the enumerate() anti-pattern. Gradient color math is trivial and not worth testing.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Bottom-up fill direction",
+      "max_score": 25,
+      "description": "For the 8-segment top-indexed hardware described in the task, the lit segments are the HIGH indices (e.g. segments 6 and 7 for value=0.25, not segments 0 and 1) — thermometer convention fills from bottom upward, not top-down"
+    },
+    {
+      "name": "Index inversion formula for top-indexed hardware",
+      "max_score": 25,
+      "description": "For top-indexed hardware, uses range(total - lit, total) or equivalent — segment indices are offset from the top so that bottom-up fill maps to the high-numbered indices. This inversion is the non-obvious part"
+    },
+    {
+      "name": "No enumerate anti-pattern",
+      "max_score": 20,
+      "description": "Does NOT contain code that uses `for i, seg in enumerate(segments)` or equivalent to light cells in list order as the mechanism for bottom-up fill — this produces top-down fill on top-indexed hardware and is the classic mistake"
+    },
+    {
+      "name": "Explains enumerate produces wrong fill direction",
+      "max_score": 15,
+      "description": "rendering_notes.md explains why iterating segments in Python list/enumeration order produces a top-down fill (incorrect for thermometer convention) rather than bottom-up on top-indexed hardware — the enumeration order matches index order which is top-down"
+    },
+    {
+      "name": "Quantisation formula int(round(value * total))",
+      "max_score": 10,
+      "description": "Uses int(round(value * total_segments)) to determine the number of segments to light — the standard quantisation formula for mapping a 0..1 float to a segment count"
+    },
+    {
+      "name": "Bottom-indexed formula also present",
+      "max_score": 5,
+      "description": "Code or notes show that bottom-indexed hardware uses range(0, lit) — the two cases (top-indexed vs bottom-indexed) are handled differently"
+    }
+  ]
+}

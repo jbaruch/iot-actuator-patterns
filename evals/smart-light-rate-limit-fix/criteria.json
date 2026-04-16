@@ -1,0 +1,41 @@
+{
+  "context": "Tests whether the agent understands the plugin's non-obvious control semantics: send-latest (not queue), stability as consecutive-tick-hold (not rate limiting), and exact-value matching that causes the quantisation trap. Specific numeric defaults are near-trivial and worth minimal points.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Send-latest semantics: stale targets dropped not queued",
+      "max_score": 25,
+      "description": "design_notes.md explains that during a throttle window stale targets are DROPPED/OVERWRITTEN — only the most recent value is sent when the window expires. This is send-latest semantics, NOT a FIFO queue and NOT simple rate-limiting that delays every call"
+    },
+    {
+      "name": "Stability filter is consecutive-tick hold NOT rate limiting",
+      "max_score": 25,
+      "description": "design_notes.md explains that the stability filter requires the target to hold the SAME value for N consecutive ticks before committing. This is a conceptually different mechanism from rate limiting or simple debounce — it suppresses rapid alternation between values, not just high call frequency"
+    },
+    {
+      "name": "Exact value match required for stability (quantisation trap)",
+      "max_score": 25,
+      "description": "Code or design_notes.md shows that the stability filter compares target == self._pending (exact equality). The new target must be IDENTICAL to the pending value to count as a consecutive tick. This is what causes the quantisation trap: float targets that drift by even 0.001 between ticks reset the stability counter"
+    },
+    {
+      "name": "Discrete target values not raw floats",
+      "max_score": 10,
+      "description": "Targets passed to set_target() are discrete values (strings like 'focused', 'collaborative', etc. or integers) — NOT raw floats from the classifier. The target must be quantised to match device states"
+    },
+    {
+      "name": "Cloud min_interval default 1.2s",
+      "max_score": 5,
+      "description": "The controller is instantiated with min_interval_sec=1.2 (or no override, using the 1.2s default) for the cloud API"
+    },
+    {
+      "name": "Stability ticks default 2",
+      "max_score": 5,
+      "description": "The controller uses stability_ticks=2 (default) — target must hold for 2 consecutive ticks before committing"
+    },
+    {
+      "name": "Tick rate default 0.4s",
+      "max_score": 5,
+      "description": "The controller uses tick_sec=0.4 (default) for the controller polling interval"
+    }
+  ]
+}
