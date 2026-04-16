@@ -1,0 +1,22 @@
+{
+  "name": "jbaruch/iot-actuator-patterns",
+  "version": "0.1.0",
+  "summary": "Patterns for driving rate-limited IoT actuators from real-time producers: async debounced controller, target quantization for stability, and bottom-up progress-bar rendering.",
+  "private": false,
+  "rules": {
+    "iot-actuator-patterns-rules": {
+      "rules": "rules/iot-actuator-patterns-rules.md"
+    }
+  },
+  "skills": {
+    "debounce-controller": {
+      "path": "skills/debounce-controller/SKILL.md"
+    },
+    "target-quantization": {
+      "path": "skills/target-quantization/SKILL.md"
+    },
+    "render-progress-bar": {
+      "path": "skills/render-progress-bar/SKILL.md"
+    }
+  }
+}
