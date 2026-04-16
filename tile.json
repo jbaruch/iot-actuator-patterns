@@ -1,6 +1,6 @@
 {
   "name": "jbaruch/iot-actuator-patterns",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "Patterns for driving rate-limited IoT actuators from real-time producers: async debounced controller, target quantization for stability, and bottom-up progress-bar rendering.",
   "private": false,
   "rules": {
